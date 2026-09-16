@@ -1,0 +1,15 @@
+Beef Pho,3
+-
+Mushroom Risotto,1
+Beef Pho,2
+Chicken Pho,2
+-
+Beef Pho,3
+Chicken Pho,3
+Beef Pho,3
+Beef Pho,3
+-
+Fresh Orange Juice,2
+Spicy Vegan Tofu,2
+Beef Pho,1
+-

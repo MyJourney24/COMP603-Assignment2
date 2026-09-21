@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -28,139 +33,258 @@ public class FileManagertxt implements FileManager{
     private Menue m1 = new Menue();
     private ArrayList<Food> fullMenu = m1.getFullMenu();
     
+    private static final String locationDB = "jdbc:derby://localhost:1527/FantasticDatabase";
+    private static final String USER = "APP";
+    private static final String PASS = "APP";
+    
 
     @Override
     public boolean savesUser(String username, String password) { // writer 1
         
-        if(usernameExists(username))
+        String getData = "SELECT USERNAME FROM USERPASSWORD";
+        
+        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); 
+                PreparedStatement statement = conn.prepareStatement(getData))
         {
-            System.out.println("please use another username");
-            return false;
+            ResultSet rs = statement.executeQuery(getData); 
+            while (rs.next())
+            {
+            String presentUsername = rs.getString("USERNAME");
+            if (presentUsername.equals(username))
+            {
+                return false;
+            }
+            }
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
         }
         
-        try (FileWriter fwU = new FileWriter(userFile, true)) {
-        String usernameWithNewLine = username + "," + password;
-        fwU.write(usernameWithNewLine);
         
-        fwU.close();
-        System.out.println("=====================================================\n");               
-        System.out.println("Welcome Back " + username + "\n");
-        System.out.println("=====================================================\n");
+        
+        String insertUser = "INSERT INTO USERPASSWORD (USERNAME, PASSWORD) VALUES (?,?)";
+
+        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); 
+                PreparedStatement statement = conn.prepareStatement(insertUser))
+        {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.execute();
+
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
             
-        return true; // Return true if signup/save was successful
-        
-        } 
-        catch (IOException e) {
-            System.out.println("Error: Could not save user data. " + e.getMessage());
-            return false;
-        }        
+//        if(usernameExists(username))
+//        {
+//            System.out.println("please use another username");
+//            return false;
+//        }
+//        
+//        try (FileWriter fwU = new FileWriter(userFile, true)) {
+//        String usernameWithNewLine = username + "," + password;
+//        fwU.write(usernameWithNewLine);
+//        
+//        fwU.close();
+//        System.out.println("=====================================================\n");               
+//        System.out.println("Welcome Back " + username + "\n");
+//        System.out.println("=====================================================\n");
+//            
+//        return true; // Return true if signup/save was successful
+//        
+//        } 
+//        catch (IOException e) {
+//            System.out.println("Error: Could not save user data. " + e.getMessage());
+//            return false;
+//        }    
+    return true;
     }
 
     @Override
     public String authenticateUser(String username, String password) { // reader 1
         
-        try
+        String getData = "SELECT USERNAME, PASSWORD FROM USERPASSWORD";
+        
+        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); 
+                PreparedStatement statement = conn.prepareStatement(getData))
         {
-            FileReader frU = new FileReader(userFile); // reads the txt file
-            BufferedReader brU = new BufferedReader(frU);
-            
-            String line;
-            
-            
-            while ((line = brU.readLine()) != null) // store next line to theLine, carries on past the loop when theirs nothing in the txt file
+            ResultSet rs = statement.executeQuery(getData); 
+            while (rs.next())
             {
-                String[] parts = line.split(",");
-                if(username.equals(parts[0]) && password.equals(parts[1])) // ps even numbers in array are username while odd is password
+                String presentUsername = rs.getString("USERNAME");
+                String presentPassword = rs.getString("PASSWORD");
+                if (presentUsername.equals(username) && presentPassword.equals(password))
                 {
-                    return username; // returns true if combination is found
+                    return username;
                 }
-
             }
-              
         }
-        catch (IOException e) {
+        catch(Exception e)
+        {
             System.out.println(e);
+            return null;
         }
+        
         return null;
+        
+        
+//        try
+//        {
+//            FileReader frU = new FileReader(userFile); // reads the txt file
+//            BufferedReader brU = new BufferedReader(frU);
+//            
+//            String line;
+//            
+//            
+//            while ((line = brU.readLine()) != null) // store next line to theLine, carries on past the loop when theirs nothing in the txt file
+//            {
+//                String[] parts = line.split(",");
+//                if(username.equals(parts[0]) && password.equals(parts[1])) // ps even numbers in array are username while odd is password
+//                {
+//                    return username; // returns true if combination is found
+//                }
+//
+//            }
+//              
+//        }
+//        catch (IOException e) {
+//            System.out.println(e);
+//        }
+//        return null;
     }
 
     @Override
     public boolean savesBooking(String bookedName, String bookedTime) { //writer 2
         
-        try 
-        {
-            FileReader fr = new FileReader("Booking.txt"); // reads the txt file
-            BufferedReader br = new BufferedReader(fr);
-            
-            String line;
-            boolean noOverlap = true;
-            
-            String[] newParts = bookedTime.split(",");
-            int newday = Integer.parseInt(newParts[0]); 
-            int newhour = Integer.parseInt(newParts[1]);
-            int newtime = Integer.parseInt(newParts[3]);
-            
-            
-            while ((line = br.readLine()) != null)
+        String getData = "SELECT BOOKINGID, USERNAME, DAYOFWEEK, TIMEOFDAY, DURATION FROM USERBOOKING";
+        
+        String[] newParts = bookedTime.split(",");
+        int newday = Integer.parseInt(newParts[0]); 
+        int newhour = Integer.parseInt(newParts[1]);
+        int newtime = Integer.parseInt(newParts[3]);
+        
+        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); 
+                PreparedStatement statement = conn.prepareStatement(getData))
             {
-                String[] parts = line.split(",");
-                
-                String name = parts[0];
-                int day = Integer.parseInt(parts[1]); 
-                int hour = Integer.parseInt(parts[2]);
-                int time = Integer.parseInt(parts[4]);
-                
-                if (newday == day && name.equals(bookedName))
+                ResultSet rs = statement.executeQuery(getData); 
+                while (rs.next())
                 {
-                    //new hours present
-                    ArrayList<Integer> newHoursPresent = new ArrayList<Integer>();
+                    String presentUser = rs.getString("USERNAME");
+                    int presentDay = rs.getInt("DAYOFWEEK");
+                    int presentTime = rs.getInt("TIMEOFDAY");
+                    int presentDuration = rs.getInt("DURATION");
                     
-                    for (int i = 0; i<newtime; i++)
+                    if (presentUser.equals(bookedName) && presentDay == newday && presentTime == newhour && presentDuration == newtime)
                     {
-                        newHoursPresent.add(newhour+i);
+                        System.out.println("Sorry, this booking clashes with your previous booking");
+                        return false;
                     }
-                    
-                    //old hours present
-                    
-                    ArrayList<Integer> oldHoursPresent = new ArrayList<Integer>();
-                    
-                    for (int i = 0; i<time; i++)
-                    {
-                        oldHoursPresent.add(hour+i);
-                    }
-                    
-                    for (Integer hours1 : newHoursPresent)
-                    {
-                        for (Integer hours2 : oldHoursPresent)
-                        {
-                            if (hours1 == hours2)
-                            {
-                                System.out.println("Sorry, this booking clashes with your previous booking");
-                                return false;
-                            }
-                        }
-                    }
-                    
                 }
             }
-            
-        }
-        catch (IOException e) {
-            System.out.println("Error saving order details: " + e.getMessage());
-            return false;
-        }
-
-        try (BufferedWriter bookingWriter = new BufferedWriter(new FileWriter(bookingFile, true))) {
-            bookingWriter.write(bookedName+ "," + bookedTime);
-            bookingWriter.newLine();
-            
-        } catch (IOException e) {
-            System.out.println("Error saving order details: " + e.getMessage());
-            return false;
-        }
+            catch(Exception e)
+            {
+                System.out.println(e);
+                return false;
+            }
         
-        System.out.println("Saved");
-        return true;
+        String insertUser = "INSERT INTO USERBOOKING (BOOKINGID, USERNAME, DAYOFWEEK, TIMEOFDAY, PEOPLE, DURATION) VALUES (?,?,?,?,?,?)";
+
+        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); 
+                PreparedStatement statement = conn.prepareStatement(insertUser))
+            {
+
+
+                statement.setString(2, bookedName);
+                statement.setInt(3, newday);
+                statement.setInt(3, newhour);
+                statement.setInt(3, newtime);
+
+                statement.execute();
+                return true;
+            }
+            catch(Exception e)
+            {
+                System.out.println(e);
+            }
+        
+//        try 
+//        {
+//            FileReader fr = new FileReader("Booking.txt"); // reads the txt file
+//            BufferedReader br = new BufferedReader(fr);
+//            
+//            String line;
+//            boolean noOverlap = true;
+//            
+//            String[] newParts = bookedTime.split(",");
+//            int newday = Integer.parseInt(newParts[0]); 
+//            int newhour = Integer.parseInt(newParts[1]);
+//            int newtime = Integer.parseInt(newParts[3]);
+//            
+//            
+//            while ((line = br.readLine()) != null)
+//            {
+//                String[] parts = line.split(",");
+//                
+//                String name = parts[0];
+//                int day = Integer.parseInt(parts[1]); 
+//                int hour = Integer.parseInt(parts[2]);
+//                int time = Integer.parseInt(parts[4]);
+//                
+//                if (newday == day && name.equals(bookedName))
+//                {
+//                    //new hours present
+//                    ArrayList<Integer> newHoursPresent = new ArrayList<Integer>();
+//                    
+//                    for (int i = 0; i<newtime; i++)
+//                    {
+//                        newHoursPresent.add(newhour+i);
+//                    }
+//                    
+//                    //old hours present
+//                    
+//                    ArrayList<Integer> oldHoursPresent = new ArrayList<Integer>();
+//                    
+//                    for (int i = 0; i<time; i++)
+//                    {
+//                        oldHoursPresent.add(hour+i);
+//                    }
+//                    
+//                    for (Integer hours1 : newHoursPresent)
+//                    {
+//                        for (Integer hours2 : oldHoursPresent)
+//                        {
+//                            if (hours1 == hours2)
+//                            {
+//                                System.out.println("Sorry, this booking clashes with your previous booking");
+//                                return false;
+//                            }
+//                        }
+//                    }
+//                    
+//                }
+//            }
+//            
+//        }
+//        catch (IOException e) {
+//            System.out.println("Error saving order details: " + e.getMessage());
+//            return false;
+//        }
+//
+//        try (BufferedWriter bookingWriter = new BufferedWriter(new FileWriter(bookingFile, true))) {
+//            bookingWriter.write(bookedName+ "," + bookedTime);
+//            bookingWriter.newLine();
+//            
+//        } catch (IOException e) {
+//            System.out.println("Error saving order details: " + e.getMessage());
+//            return false;
+//        }
+//        
+//        System.out.println("Saved");
+//        return true;
+        return false;
     }
 
     @Override
@@ -240,56 +364,89 @@ public class FileManagertxt implements FileManager{
     @Override
     public String readUserBookings(String username)
     {
-       try
-        {
-            String yourBooking = "";
-            int bookingCount = 0;
-            FileReader fr = new FileReader("Booking.txt"); // reads the txt file
-            BufferedReader br = new BufferedReader(fr);
-            String line;
-            
-            ArrayList<Integer> unique = new ArrayList<>();
-            
-            while ((line = br.readLine()) != null) // store next line to theLine, carries on past the loop when theirs nothing in the txt file
+        String getData = "SELECT BOOKINGID, USERNAME, DAYOFWEEK, TIMEOFDAY, PEOPLE, DURATION FROM USERBOOKING";
+        int bookingCount = 0;
+        
+        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); 
+                PreparedStatement statement = conn.prepareStatement(getData))
             {
-                String[] parts = line.split(","); // splits the line at "," and stores it seperately
-                
-                // converts string from reader to int and stores them
-                String name = parts[0];
-                int day = Integer.parseInt(parts[1]); 
-                int hour = Integer.parseInt(parts[2]);
-                int people = Integer.parseInt(parts[3]);
-                int time = Integer.parseInt(parts[4]);
-                
-                if (username.equals(name)) // checks to see if the the booking is the user
+                ResultSet rs = statement.executeQuery(getData); 
+                while (rs.next())
                 {
-                    Integer currentCode = day + hour + people + time;
-                    boolean codeNotSeen = true;
-
-                    for (Integer code : unique)
+                    
+                    String presentUser = rs.getString("USERNAME");
+                    int presentDay = rs.getInt("DAYOFWEEK");
+                    int presentTime = rs.getInt("TIMEOFDAY");
+                    int presentPeople = rs.getInt("PEOPLE");
+                    int presentDuration = rs.getInt("DURATION");
+                    
+                    if (presentUser.equals(username))
                     {
-                        if (code.equals(currentCode))
-                        {
-                            codeNotSeen = false;
-                        }
-
+                        bookingCount++;
+                        String yourBooking =  bookingCount + ") day: " + presentDay + " at " + presentTime + ":00 o'clock" + " people: " + presentPeople + " time: " + presentDuration + "\n";
+                        System.out.println(yourBooking);
                     }
-
-                    if (codeNotSeen == true)
-                    {
-                        bookingCount ++;
-                        yourBooking += bookingCount + ") day: " + day + " at " + hour + ":00 o'clock" + " people: " + people + " time: " + time + "\n";
-                        unique.add(currentCode);
-                    }    
-                }    
+                    
+                    
+                }
             }
-            System.out.print(yourBooking);
-        }
-        catch (IOException | NumberFormatException e) {
-            System.out.println(e);
-        }
-            
-        return null;
+            catch(Exception e)
+            {
+                System.out.println(e);
+                return null;
+            }
+            return null;
+        
+//       try
+//        {
+//            String yourBooking = "";
+//            int bookingCount = 0;
+//            FileReader fr = new FileReader("Booking.txt"); // reads the txt file
+//            BufferedReader br = new BufferedReader(fr);
+//            String line;
+//            
+//            ArrayList<Integer> unique = new ArrayList<>();
+//            
+//            while ((line = br.readLine()) != null) // store next line to theLine, carries on past the loop when theirs nothing in the txt file
+//            {
+//                String[] parts = line.split(","); // splits the line at "," and stores it seperately
+//                
+//                // converts string from reader to int and stores them
+//                String name = parts[0];
+//                int day = Integer.parseInt(parts[1]); 
+//                int hour = Integer.parseInt(parts[2]);
+//                int people = Integer.parseInt(parts[3]);
+//                int time = Integer.parseInt(parts[4]);
+//                
+//                if (username.equals(name)) // checks to see if the the booking is the user
+//                {
+//                    Integer currentCode = day + hour + people + time;
+//                    boolean codeNotSeen = true;
+//
+//                    for (Integer code : unique)
+//                    {
+//                        if (code.equals(currentCode))
+//                        {
+//                            codeNotSeen = false;
+//                        }
+//
+//                    }
+//
+//                    if (codeNotSeen == true)
+//                    {
+//                        bookingCount ++;
+//                        yourBooking += bookingCount + ") day: " + day + " at " + hour + ":00 o'clock" + " people: " + people + " time: " + time + "\n";
+//                        unique.add(currentCode);
+//                    }    
+//                }    
+//            }
+//            System.out.print(yourBooking);
+//        }
+//        catch (IOException | NumberFormatException e) {
+//            System.out.println(e);
+//        }
+//            
+//        return null;
     }
     
     @Override

@@ -1,0 +1,86 @@
+Thu Sep 17 10:16:11 NZST 2026 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
+----------------------------------------------------------------
+Thu Sep 17 10:16:32 NZST 2026:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-01a0-ac4a-af3e-fffff8a10a72 
+on database directory C:\Users\mered\OneDrive - AUT University\Semester 2 2026\Program Design and Construction COMP603\COMP603 Assignment 2\Final 2\FantasticResturaunt with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@50b4d649 
+Loaded from file:/C:/Users/mered/OneDrive%20-%20AUT%20University/Semester%202%202026/Program%20Design%20and%20Construction%20COMP603/test/db-derby-10.14.2.0-bin/db-derby-10.14.2.0-bin/lib/derby.jar
+java.vendor=Eclipse Adoptium
+java.runtime.version=26.0.1+8
+user.dir=C:\Users\mered\OneDrive - AUT University\Semester 2 2026\Program Design and Construction COMP603\test\db-derby-10.14.2.0-bin\db-derby-10.14.2.0-bin
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=C:\Users\mered\OneDrive - AUT University\Semester 2 2026\Program Design and Construction COMP603\COMP603 Assignment 2\Final 2
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Thu Sep 17 10:17:15 NZST 2026:
+Shutting down instance a816c00e-01a0-ac4a-af3e-fffff8a10a72 on database directory C:\Users\mered\OneDrive - AUT University\Semester 2 2026\Program Design and Construction COMP603\COMP603 Assignment 2\Final 2\FantasticResturaunt with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@50b4d649 
+Thu Sep 17 10:17:15 NZST 2026 Thread[#45,DRDAConnThread_2,5,main] (DATABASE = FantasticResturaunt), (DRDAID = {2}), Database 'FantasticResturaunt' shutdown.
+Thu Sep 17 10:18:16 NZST 2026 Thread[#45,DRDAConnThread_2,5,main] Cleanup action starting
+java.sql.SQLException: Database 'UserAccess' not found.
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.getSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.getSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.Util.generateCsSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.Util.generateCsSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.newSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.handleDBNotFound(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.<init>(Unknown Source)
+	at org.apache.derby.jdbc.InternalDriver$1.run(Unknown Source)
+	at org.apache.derby.jdbc.InternalDriver$1.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:251)
+	at org.apache.derby.jdbc.InternalDriver.getNewEmbedConnection(Unknown Source)
+	at org.apache.derby.jdbc.InternalDriver.connect(Unknown Source)
+	at org.apache.derby.jdbc.InternalDriver.connect(Unknown Source)
+	at org.apache.derby.jdbc.EmbeddedDriver.connect(Unknown Source)
+	at org.apache.derby.impl.drda.Database.makeConnection(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.getConnFromDatabaseName(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.verifyUserIdPassword(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.parseSECCHK(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.parseDRDAConnection(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.processCommands(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
+Caused by: ERROR XJ004: Database 'UserAccess' not found.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.wrapArgsForTransportAcrossDRDA(Unknown Source)
+	... 21 more
+============= begin nested exception, level (1) ===========
+ERROR XJ004: Database 'UserAccess' not found.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.wrapArgsForTransportAcrossDRDA(Unknown Source)
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.getSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.getSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.Util.generateCsSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.Util.generateCsSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.newSQLException(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.handleDBNotFound(Unknown Source)
+	at org.apache.derby.impl.jdbc.EmbedConnection.<init>(Unknown Source)
+	at org.apache.derby.jdbc.InternalDriver$1.run(Unknown Source)
+	at org.apache.derby.jdbc.InternalDriver$1.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:251)
+	at org.apache.derby.jdbc.InternalDriver.getNewEmbedConnection(Unknown Source)
+	at org.apache.derby.jdbc.InternalDriver.connect(Unknown Source)
+	at org.apache.derby.jdbc.InternalDriver.connect(Unknown Source)
+	at org.apache.derby.jdbc.EmbeddedDriver.connect(Unknown Source)
+	at org.apache.derby.impl.drda.Database.makeConnection(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.getConnFromDatabaseName(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.verifyUserIdPassword(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.parseSECCHK(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.parseDRDAConnection(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.processCommands(Unknown Source)
+	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
+============= end nested exception, level (1) ===========
+Cleanup action completed
+Thu Sep 17 10:18:16 NZST 2026 Thread[#45,DRDAConnThread_2,5,main] (DATABASE = UserAccess), (DRDAID = {3}), Database 'UserAccess' not found.
+----------------------------------------------------------------
+Thu Sep 17 10:18:53 NZST 2026:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance 0ddd00a9-01a0-ac4a-af3e-fffff8a10a72 
+on database directory C:\Users\mered\OneDrive - AUT University\Semester 2 2026\Program Design and Construction COMP603\COMP603 Assignment 2\Final 2\FantasticDatabase with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@50b4d649 
+Loaded from file:/C:/Users/mered/OneDrive%20-%20AUT%20University/Semester%202%202026/Program%20Design%20and%20Construction%20COMP603/test/db-derby-10.14.2.0-bin/db-derby-10.14.2.0-bin/lib/derby.jar
+java.vendor=Eclipse Adoptium
+java.runtime.version=26.0.1+8
+user.dir=C:\Users\mered\OneDrive - AUT University\Semester 2 2026\Program Design and Construction COMP603\test\db-derby-10.14.2.0-bin\db-derby-10.14.2.0-bin
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=C:\Users\mered\OneDrive - AUT University\Semester 2 2026\Program Design and Construction COMP603\COMP603 Assignment 2\Final 2
+Database Class Loader started - derby.database.classpath=''

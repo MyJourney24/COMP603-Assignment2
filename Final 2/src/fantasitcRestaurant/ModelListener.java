@@ -8,6 +8,10 @@ package fantasitcRestaurant;
  *
  * @author mered
  */
-public class SignInInterface {
+public interface ModelListener {
+    
+    void switchTo(int num);
+    
+    void changetxtDisplay(int num, String yourOrderDisplay);
     
 }

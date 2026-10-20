@@ -27,7 +27,8 @@ public class Controller{
         this.fantasticView.addOrderBookingActionListeners(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Order button");
+                //switch to order and booking
+                System.out.println("Order and booking \n");
                 fantasticModel.switchToOrderBookingChoice();
             }
         });
@@ -35,8 +36,8 @@ public class Controller{
         this.fantasticView.addViewCancleButtonActionListeners(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Order button");
-                //add booking detail change
+                //switch to view cancel bookings (if logged in otherwise login)
+                System.out.println("View cancel \n");
                 fantasticModel.showBookings();
                 fantasticModel.switchToViewCancel();
             }
@@ -47,7 +48,8 @@ public class Controller{
         this.fantasticView.addOrderBookingBackButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Order button");
+                // returns to main menue
+                System.out.println("back\n");
                 fantasticModel.switchToMainMenue();
             }
         });
@@ -55,7 +57,7 @@ public class Controller{
         this.fantasticView.addOrderBookingOrderButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Order button");
+                System.out.println("order\n");
                 fantasticModel.switchToDiet();
             }
         });
@@ -63,7 +65,7 @@ public class Controller{
         this.fantasticView.addOrderBookingBookingButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Order button");
+                System.out.println("booking \n");
                 fantasticModel.switchToBooking();
             }
         });
@@ -126,7 +128,7 @@ public class Controller{
         this.fantasticView.addDietNextButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Order button");
+                System.out.println("move to ordering \n");
                 
                 ArrayList<Food> yourfilteredOrder = fantasticModel.filteredMenu(fantasticModel.vegan, fantasticModel.vegitarian, fantasticModel.glutenFree, fantasticModel.alcoholFree);
                 String yourfilteredOrdertxt = fantasticModel.displayFilteredMenu(yourfilteredOrder);
@@ -140,7 +142,7 @@ public class Controller{
         this.fantasticView.addDietBackButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Order button");
+                System.out.println("back to booking or ordering\n");
                 fantasticModel.switchToOrderBookingChoice();
             }
         });
@@ -149,8 +151,7 @@ public class Controller{
         this.fantasticView.addMakeOrderAddActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                // add order function
-                System.out.print("add to order pressed");
+                System.out.print("adds order\n");
                        
                 int orderNum = fantasticView.getOrderNumber();
                 int servingNum = fantasticView.getServingNumber();
@@ -162,7 +163,7 @@ public class Controller{
         this.fantasticView.addMakeOrderNextActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the next button");
+                System.out.println("finish ordering\n");
                 fantasticModel.showOrder();
                 fantasticModel.switchToSaveOrderChoice();
             }
@@ -170,7 +171,7 @@ public class Controller{
         this.fantasticView.addMakeOrderBackActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Order button");
+                System.out.println("back to diet filter\n");
                 fantasticModel.switchToDiet();
             }
         });
@@ -179,7 +180,7 @@ public class Controller{
         this.fantasticView.addSaveOrderBackSaveButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Save button");
+                System.out.println("confirms order and moves to booking\n");
                 fantasticModel.switchToBooking();
             }
         });
@@ -187,7 +188,7 @@ public class Controller{
         this.fantasticView.addSaveOrderBackBackButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Save button");
+                System.out.println("go bacck to ordering\n");
                 fantasticModel.switchToOrder();
             }
         });
@@ -197,7 +198,7 @@ public class Controller{
         this.fantasticView.addAvailabilitiesBookingChoiceAvailabilitiesButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the availabilities button");
+                System.out.println("You clicked the availabilities button\n");
                 fantasticModel.switchToAvailabilitieView();
             }
         });
@@ -205,7 +206,7 @@ public class Controller{
         this.fantasticView.addAvailabilitiesBookingChoiceBookingButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the booking button");
+                System.out.println("You clicked the booking button\n");
                 fantasticModel.switchToDaySelection();
             }
         });
@@ -213,8 +214,7 @@ public class Controller{
         this.fantasticView.addAvailabilitiesBookingChoiceQuitButtonActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("You clicked the back button \n");
                 fantasticModel.switchToOrderBookingChoice();
             }
         });
@@ -224,8 +224,7 @@ public class Controller{
         this.fantasticView.addAvailabilityReportNextButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("Select day \n");
                 fantasticModel.switchToDaySelection();
             }
         });
@@ -233,8 +232,7 @@ public class Controller{
         this.fantasticView.addAvailabilityReportBackButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("You clicked the back button \n");
                 fantasticModel.switchToBooking();
             }
         });
@@ -306,8 +304,8 @@ public class Controller{
         this.fantasticView.addSelectDayNextButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("Moving to select our \n");
+                
                 if (fantasticModel.bookingDay == 0)
                 {
                     fantasticModel.missingDayError("please select a Day");
@@ -323,7 +321,7 @@ public class Controller{
         this.fantasticView.addSelectDayBackButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
+                System.out.println("You clicked the back button\n");
                 fantasticModel.switchToBooking();
             }
         });
@@ -454,8 +452,7 @@ public class Controller{
         this.fantasticView.addSelectHourNextButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("Moving to select people\n");
                 if (fantasticModel.bookingHour == 0)
                 {
                     fantasticModel.missingDayError("please select a Hour");
@@ -470,7 +467,7 @@ public class Controller{
         this.fantasticView.addSelectHourBackButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
+                System.out.println("You clicked the back button\n");
                 fantasticModel.switchToDaySelection();
             }
         });
@@ -480,8 +477,7 @@ public class Controller{
         this.fantasticView.addSelectPeopleNextButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the Next button");
-                // add if statement
+                System.out.println("Moving to select duration \n");
                 int peoplePresent = fantasticView.getPeopleCount();
                 
                 if (peoplePresent < 1)
@@ -500,7 +496,6 @@ public class Controller{
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("You clicked the back button");
-                // add if statement
                 fantasticModel.switchToHour();
             }
         });
@@ -541,8 +536,7 @@ public class Controller{
         this.fantasticView.addSelectDurationNextButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("Move to check availability\n");
                 if (fantasticModel.bookingTime == 0)
                 {
                     fantasticModel.missingPeopleError("Please input duration of stay");
@@ -559,7 +553,6 @@ public class Controller{
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("You clicked the back button");
-                // add if statement
                 fantasticModel.switchToPeopleSelection();
             }
         });
@@ -569,8 +562,8 @@ public class Controller{
         this.fantasticView.addavailableOrNotNextButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("Switch to confirm order\n");
+                 
                 if (fantasticModel.yourBookingAvailability == "unavailable")
                 {
                     fantasticModel.switchToBooking();
@@ -594,8 +587,8 @@ public class Controller{
         this.fantasticView.addSignupOrLoginLoginButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("move to login\n");
+                 
                 fantasticModel.switchToLogin();
                 
             }
@@ -604,8 +597,8 @@ public class Controller{
         this.fantasticView.addSignupOrLoginSignUpButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("move to signup \n");
+                 
                 fantasticModel.switchToSignup();
             }
         });
@@ -613,8 +606,8 @@ public class Controller{
         this.fantasticView.addSignupOrLoginBackButton(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("You clicked the back button\n");
+                 
                 fantasticModel.switchToDurationSelection();
             }
         });
@@ -625,8 +618,8 @@ public class Controller{
         this.fantasticView.addLoginButtonListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("login confirmed\n");
+                 
                 
                 String authenticateUsername = fantasticView.getLoginUnText();
                 String authenticatePassword = fantasticView.getLoginPwText();
@@ -652,8 +645,8 @@ public class Controller{
         this.fantasticView.addLoginBackButtonListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("back to main menue\n");
+                 
                 fantasticModel.switchToMainMenue();
             }
         });
@@ -663,23 +656,15 @@ public class Controller{
         this.fantasticView.addSignupButtonListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("Sign in\n");
+                 
                 
                 String newUsername = fantasticView.getLoginUnText();
                 String newPassword = fantasticView.getLoginPwText();
 
                 boolean signUpSuccess = fantasticModel.saveNewUser(newUsername, newPassword);
                 if (signUpSuccess) {
-                    fantasticModel.showOrderDetailsToBeConfirmed();
-                    if (fantasticModel.fromView == false)
-                    {
-                        fantasticModel.switchToConfirmOrder();
-                    }
-                    else 
-                    {
-                        //to view
-                    }
+                    fantasticModel.switchToConfirmOrder();
                 }
                 
                 
@@ -699,8 +684,8 @@ public class Controller{
         this.fantasticView.addconfirmDetailsYesListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("order Saved \n");
+                 
                 fantasticModel.saveOrder();
                 fantasticModel.switchToMainMenue();
             }
@@ -709,8 +694,8 @@ public class Controller{
         this.fantasticView.addconfirmDetailsNoListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
+                System.out.println("You clicked the back button\n");
+                 
                 fantasticModel.switchToDurationSelection();
             }
         });
@@ -720,9 +705,9 @@ public class Controller{
         this.fantasticView.addviewBookingViewOrderListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
                 int orderNumber = fantasticView.getviewBookingViewTF();
+                
+                System.out.println("view order" + orderNumber + "\n");
                 
                 if (orderNumber > fantasticModel.totalBookings )
                 {
@@ -743,9 +728,9 @@ public class Controller{
         this.fantasticView.addviewBookingCancelBookingistener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
-                // add if statement
                 int orderNumber = fantasticView.getviewBookingCancelTF();
+                
+                System.out.println("Cancel order " + orderNumber + "\n");
                 
                 if (orderNumber > fantasticModel.totalBookings )
                 {
@@ -765,7 +750,7 @@ public class Controller{
         this.fantasticView.addviewBookingBackListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
+                System.out.println("You clicked the back button\n");
                 fantasticModel.switchToMainMenue();
             }
         });
@@ -775,7 +760,7 @@ public class Controller{
         this.fantasticView.addviewOrderBackListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("You clicked the back button");
+                System.out.println("You clicked the back button\n");
                 fantasticModel.switchToViewBooking();
             }
         });

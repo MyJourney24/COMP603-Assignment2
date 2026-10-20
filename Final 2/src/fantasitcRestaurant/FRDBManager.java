@@ -22,8 +22,10 @@ public final class FRDBManager {
     private static final String USER = "app";
     private static final String PASS = "app";
     
+    private static FRDBManager instance;
     Connection conn;
-    public FRDBManager()
+    
+    private FRDBManager()
     {
         connectFantasticRestaurantDB();
         
@@ -38,13 +40,22 @@ public final class FRDBManager {
         if (!checkTableExisting("USERORDER")) {
                 insertUserOrder();
             }
-        
-        
-        
+    }
+    
+    public static synchronized FRDBManager getInstance() {
+        if (instance == null) {
+            instance = new FRDBManager();
+        }
+        return instance;
+    }
+    
+    @Override
+    public Object clone() throws
+    CloneNotSupportedException {
+    throw new CloneNotSupportedException();
     }
     
     public void connectFantasticRestaurantDB() {
-        //use the conn, initialize database by creating BOOK Table and insert records
         try
         {
             getConnection();
@@ -269,87 +280,4 @@ public final class FRDBManager {
             }
     }
     
-//    public static void main(String[] args)
-//    {
-//        FRDBManager frdbManager = new FRDBManager();
-//        frdbManager.establishConnection();
-//        frdbManager.connectFantasticRestaurantDB();
-//        // 1. First call: Connection is null, so it creates a new one
-//        
-//        
-//        
-//        
-//        try
-//        {
-//            String getData = "SELECT USERNAME, PASSWORD FROM USERPASSWORD";
-//            ResultSet rs = frdbManager.statement.executeQuery(getData); 
-//            while (rs.next())
-//            {
-//                String presentUsername = rs.getString("USERNAME");
-//                String presentPassword = rs.getString("PASSWORD");
-//                System.out.print(presentUsername + " " + presentPassword + "\n");
-//            }
-//        }
-//        catch(Exception e)
-//        {
-//            System.out.println(e);
-//        }
-        
-//        //creates userpassword table
-//        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); Statement statement = conn.createStatement())
-//        {
-//            String createUserTable = "CREATE TABLE USERPASSWORD ("
-//                    + "USERNAME VARCHAR(30) NOT NULL, "
-//                    + "PASSWORD VARCHAR(30) NOT NULL, "
-//                    + "PRIMARY KEY (USERNAME))";
-//            
-//            statement.execute(createUserTable);
-//            
-//        }
-//        catch(Exception e)
-//        {
-//            System.out.println(e);
-//        }
-//        
-//        //creates booking table
-//        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); Statement statement = conn.createStatement())
-//        {
-//            String createUserTable = "CREATE TABLE USERBOOKING ("
-//                    + "BOOKINGID INT NOT NULL, "
-//                    + "USERNAME VARCHAR(30) NOT NULL, "
-//                    + "DAYOFWEEK INT NOT NULL, "
-//                    + "TIMEOFDAY INT NOT NULL, "
-//                    + "PEOPLE INT NOT NULL, "
-//                    + "DURATION INT NOT NULL, "
-//                    + "PRIMARY KEY (BOOKINGID), "
-//                    + "FOREIGN KEY (USERNAME) REFERENCES APP.USERPASSWORD(USERNAME))";
-//            
-//            statement.execute(createUserTable);
-//            
-//        }
-//        catch(Exception e)
-//        {
-//            System.out.println(e);
-//        }
-//        
-//        //create order table
-//        try (Connection conn = DriverManager.getConnection(locationDB, USER, PASS); Statement statement = conn.createStatement())
-//        {
-//            String createUserTable = "CREATE TABLE USERORDER ("
-//                    + "BOOKINGID INT NOT NULL, "
-//                    + "DISH VARCHAR(30) NOT NULL, "
-//                    + "SERVINGS INT NOT NULL, "
-//                    + "PRIMARY KEY (BOOKINGID), "
-//                    + "FOREIGN KEY (BOOKINGID) REFERENCES APP.USERBOOKING(BOOKINGID))";
-//            
-//            statement.execute(createUserTable);
-//            
-//        }
-//        catch(Exception e)
-//        {
-//            System.out.println(e);
-//        }
-        
-    }
-    
-//}
+}

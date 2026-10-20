@@ -4,13 +4,8 @@
  */
 package fantasitcRestaurant;
 
-import static fantasitcRestaurant.Order.displayFilteredMenu;
-import static fantasitcRestaurant.Order.orderSummary;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Scanner;
 
 /**
  *
@@ -18,14 +13,19 @@ import java.util.Scanner;
  */
 public class Model {
     
-    private FileManagertxt fileManager;
+    private FileManagerdbs fileManager;
+    private Order orderingFunctions;
+    private Booking bookingFunctions;
     private ModelListener listener;
     private View view;
     
     
-    public Model(View view, FileManagertxt fileManager) {
+    public Model(View view, FileManagerdbs fileManager) {
         // initialisation
         this.fileManager = fileManager;
+        this.orderingFunctions = new Order();
+        this.bookingFunctions = new Booking(fileManager);
+        
         this.orderItems = new HashMap<>();
         this.bookedTime = fileManager.readBookings();
         
@@ -222,67 +222,33 @@ public class Model {
     
     public static ArrayList<Food> tempSaveFiltered;
     
-    
-    public static ArrayList<Food> filteredMenu(String vegan, String vegitarian, String glutenFree, String alcoholFree)
+    public ArrayList<Food> filteredMenu(String vegan, String vegitarian, String glutenFree, String alcoholFree)
     {
-        Menue m1 = new Menue();
-        ArrayList<Food> fullMenu = m1.getFullMenu();
         ArrayList<Food> filtered = new ArrayList<>();
-        
-        for (Food theFood : fullMenu)
-        {
-            // if they have a dietary condition and the food is unsuitable 
-            if (
-                    (!"".equals(vegan) && !theFood.isVegan()) || 
-                    (!"".equals(vegitarian) && !theFood.isVegitarian()) ||
-                    (!"".equals(glutenFree) && !theFood.isGlutenFree()) ||
-                    (!"".equals(alcoholFree) && theFood.alcoholLevel() != 0)
-                ) 
-            {
-                //do nothing
-            }
-            else
-            {
-               filtered.add(theFood);
-            }
-        }
-        System.out.print("filter successfull");
-        
-        tempSaveFiltered = filtered;
+        filtered = orderingFunctions.filteredMenu(vegan, vegitarian, glutenFree, alcoholFree);
         return filtered;
     }
     
-    public static String displayFilteredMenu(ArrayList<Food> thefilteredList) 
+    public String displayFilteredMenu(ArrayList<Food> thefilteredList) 
     {
-        // this is default menue
-        if (thefilteredList.isEmpty())
-        {
-            return "sorry nothing matches your requirements please go back";
-        }
-        
-        String yourOrdertxt = "<html>Your order ";
-        
-        
-        for (int i = 0; i < thefilteredList.size(); i++) {
-            Food item = thefilteredList.get(i);
-            yourOrdertxt += "<br>" + (i + 1) + ") " + item.getFoodName() + " " + item.getPrice();
-        }
-        
-        yourOrdertxt += "<br><html>";
-        
-        return yourOrdertxt;
+        return orderingFunctions.displayFilteredMenue(thefilteredList);
     }
     
     // order
     
     private HashMap<Food, Integer> orderItems;
     
+    public HashMap<Food, Integer> getOrderItems()
+    {
+        return orderItems;
+    }
+    
     public void addOrder(ArrayList<Food> thefilteredList, int itemChoice, int servingNumber)
     {
-        if(itemChoice < 1 || itemChoice > thefilteredList.size() || servingNumber < 0)
+        if(itemChoice < 1 || itemChoice > thefilteredList.size() || servingNumber < 1)
                 {
                     System.out.println("Sorry that isn't an option");
-                    orderDetailsChangingDisplay("Sorry that isn't an option please input a positive number");
+                    orderDetailsChangingDisplay("Sorry that isn't an option please input a valid number");
                 }
         else
         {
@@ -299,32 +265,9 @@ public class Model {
     }
     
     
-    public static String orderSummary(HashMap<Food, Integer> yourOrder)
+    public String orderSummary(HashMap<Food, Integer> yourOrder)
     {
-        String yourOrderSummaryString = "<html> Your Order Summary";
-        
-        double totalCost = 0.0;
-        
-        if (yourOrder.isEmpty())
-        {
-            yourOrderSummaryString += "<br> No items ordered <html>";
-            return yourOrderSummaryString;
-        }
-        else
-        {
-            for (Map.Entry<Food, Integer> entry : yourOrder.entrySet())
-            {
-                Food food = entry.getKey();
-                int servings = entry.getValue();
-                double itemTotalCost = food.getPrice() * servings;
-                totalCost += itemTotalCost;
-                
-                yourOrderSummaryString += "<br>" + servings + " " + food.getFoodName() + " " + itemTotalCost;
-            }
-        }
-        
-        yourOrderSummaryString += "<br><br> TOTAL: $" + totalCost;
-        return yourOrderSummaryString;
+        return orderingFunctions.orderSummary(yourOrder);
     }
     
     
@@ -340,39 +283,7 @@ public class Model {
     
     public String checkAvailability(HashMap<Integer, HashMap<Integer,Integer>> bookedTime) //allows the user to check current availabilities
     {
-        String availabilitySummary = "<html>";
-        // Shows availability
-            //loops the map to see all days
-            for (Map.Entry<Integer, HashMap<Integer, Integer>> dayBooking : bookedTime.entrySet())
-            {
-                int dayNumber = dayBooking.getKey();
-                HashMap<Integer, Integer> dayMap = dayBooking.getValue();
-                
-                availabilitySummary += "<br>Day " + dayNumber + " Availability: ";
-                // loops hours to see how many availabilities are left in the hour
-                for (int i = 11; i <= 22; i++)
-                {
-                    int peoplePresent = dayMap.getOrDefault(i, 0);
-                    int spotsLeft = maxCapacity - peoplePresent;
-                    if (peoplePresent != 0)
-                    {
-                        if (spotsLeft > 0)
-                        {
-                            availabilitySummary += "<br>" + i + " o'clock" + ": Spots left " + spotsLeft;
-
-                        }
-                        else
-                        {
-                            availabilitySummary += "<br>Fully Booked ";
-                        }
-                    }
-                    
-                        
-                }
-            }
-            
-        availabilitySummary += "<html>";
-        return availabilitySummary;
+        return bookingFunctions.checkAvailability(bookedTime);
     }
     
     int bookingDay = 0;
@@ -386,15 +297,19 @@ public class Model {
     public void showAvailability()
     {
         yourBookingAvailability = isAvailable(bookedTime, bookingDay, bookingHour, bookingPeople, bookingTime);
-        
         changeAvailabilityDisplay(yourBookingAvailability);
     }
     
     public static String isAvailable(HashMap<Integer, HashMap<Integer,Integer>> bookedTime, int bookingDay, int bookingHour, int bookingPeople, int bookingTime) // confirms that their booking is available
     {
-
         String onDisplay = "";
             HashMap<Integer, Integer> theTimeMap = bookedTime.getOrDefault(bookingDay, new HashMap<>());
+            
+            if(bookingPeople <1)
+            {
+                onDisplay += "unavailable";
+                return onDisplay;
+            }
 
             for (int i = 0; i < bookingTime; i++)
             {
@@ -406,22 +321,6 @@ public class Model {
                     return onDisplay;
                 }
             }
-            
-        System.out.println("""
-                           =====================================================
-                           
-                           Booking available
-                           Day: """+ bookingDay +"""
-                                                 
-                           Hour: """+ bookingHour +"""
-                                                   
-                           People: """+ bookingPeople +"""
-                                                       
-                           Time: """+ bookingTime +"""
-                                                 
-                           =====================================================
-                           """);
-        
         onDisplay += "<html> booking available <br> Day " + bookingDay + "<br> Hour " + bookingHour + "<br> People " + bookingPeople + "<br> Time " + bookingTime + "<html>";
         
         fullBooking = bookingDay + ","+ bookingHour + "," + bookingPeople + "," + bookingTime;
@@ -430,7 +329,7 @@ public class Model {
     
     
     
-    public static String currentUser;
+    public String currentUser;
     
     // login 
     public boolean authenticateUser(String newUsername, String newPassword)
@@ -480,14 +379,9 @@ public class Model {
     
     public void saveOrder()
     {
-        System.out.println("1");
         String bookingString = bookingDay + "," + bookingHour + "," + bookingPeople + "," + bookingTime;
-        System.out.println(bookingString);
         Integer bookingID = fileManager.savesBooking(currentUser, bookingString);
-        System.out.println("3");
         fileManager.savesOrder(orderItems, bookingID);
-        System.out.println("4");
-        System.out.println(currentUser + " " + bookingString + " " + orderItems + " " + bookingID);
     }
     
     // view cancel functions
@@ -498,7 +392,6 @@ public class Model {
         String currentUserBookings = fileManager.readUserBookings(currentUser);
         totalBookings = fileManager.countUserBookings(currentUser);
         
-        System.out.println(currentUserBookings);
         changeViewBookingDetails(currentUserBookings);
     }
     
@@ -506,7 +399,6 @@ public class Model {
     {
         String currentUserOrder = fileManager.readsUserOrder(currentUser, bookingNum);
         
-        System.out.println(currentUserOrder);
         changeviewOrderDetails(currentUserOrder);
     }
     
@@ -516,7 +408,6 @@ public class Model {
         System.out.print(cancledBooking);
         
         String currentUserBookings = fileManager.readUserBookings(currentUser);
-        System.out.println(currentUserBookings);
         
         changeViewBookingDetails(currentUserBookings);
     }

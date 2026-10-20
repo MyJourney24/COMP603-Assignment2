@@ -14,14 +14,14 @@ import java.util.Map;
 public class Booking {
     
     // adds filemanager to readbooking
-    private final FileManagertxt fileManager;
+    private final FileManagerdbs fileManager;
     // the max capacit per hour
     private final int maxCapacity = 10;
     // hashmap that stores the day, the hour, and amount of people present that hour
     private final HashMap<Integer, HashMap<Integer, Integer>> bookedTime;
 
     
-    public Booking(FileManagertxt fileManager) {
+    public Booking(FileManagerdbs fileManager) {
         this.fileManager = fileManager;
         // reads the file and stores the bookings in this hashmap
         this.bookedTime = fileManager.readBookings();

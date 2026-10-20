@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author mered
  */
-public class FileManagertxt implements FileManager{
+public class FileManagerdbs implements FileManager{
     
     private static final String userFile = "Username.txt";
     private static final String bookingFile = "Booking.txt";
@@ -27,58 +27,30 @@ public class FileManagertxt implements FileManager{
     private Menue m1 = new Menue();
     private ArrayList<Food> fullMenu = m1.getFullMenu();
     
-    private static final String locationDB = "jdbc:derby://localhost:1527/FantasticDatabase";
-    private static final String USER = "APP";
-    private static final String PASS = "APP";
-    
-    //test
+
     private final FRDBManager frdbManager;
     private final Connection conn;
     private Statement statement;
     
-    
 
-    public FileManagertxt() {
-        frdbManager = new FRDBManager();
+    public FileManagerdbs() {
+        frdbManager = FRDBManager.getInstance();
         conn = frdbManager.getConnection();
     }
 
-    public void connectFantasticRestaurantDB() {
-        //use the conn, initialize database by creating BOOK Table and insert records
-        try
-        {
-            statement = conn.createStatement();
-        }
-        catch(Exception e)
-        {
-            System.out.println(e);
-        }
-        
-    }
-    
-    @Override
-    public void test()
-    {
-        try
-        {
-            String getData = "SELECT USERNAME, PASSWORD FROM USERPASSWORD";
-            ResultSet rs = frdbManager.statement.executeQuery(getData); 
-            while (rs.next())
-            {
-                String presentUsername = rs.getString("USERNAME");
-                String presentPassword = rs.getString("PASSWORD");
-                System.out.print(presentUsername + " " + presentPassword + "\n");
+    private void initStatement() {
+        try {
+            if (this.conn != null) {
+                this.statement = this.conn.createStatement();
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
-    
 
+    
     @Override
-    public boolean savesUser(String username, String password) { // writer 1 - converted and tested
+    public String savesUser(String username, String password) { // writer 1 - converted and tested
         
         String getData = "SELECT COUNT(*) FROM USERPASSWORD WHERE USERNAME = ?";
         
@@ -91,7 +63,7 @@ public class FileManagertxt implements FileManager{
                 if (rs.next() && rs.getInt(1) > 0)
                 {
                     System.out.println("Username already exist");
-                    return false;
+                    return null;
                 }
             }
             catch(Exception e)
@@ -125,7 +97,7 @@ public class FileManagertxt implements FileManager{
         System.out.println("Welcome Back " + username + "\n");
         System.out.println("=====================================================\n");
 
-        return true; // Return true if signup/save was successful
+        return username; // Return true if signup/save was successful
     }
 
     @Override
@@ -143,6 +115,10 @@ public class FileManagertxt implements FileManager{
                 if (presentUsername.equals(username) && presentPassword.equals(password))
                 {
                     return username;
+                }
+                else 
+                {
+                    return null;
                 }
             }
         }
@@ -234,7 +210,7 @@ public class FileManagertxt implements FileManager{
                     pstmt.setInt(6, newtime);
 
                     pstmt.execute();
-
+                    System.out.println("save success");
                     return bookingId;
                 }
                 catch(Exception e)
@@ -242,6 +218,7 @@ public class FileManagertxt implements FileManager{
                     System.out.println(e);
                 }
         }
+        
         return null;
     }
 
@@ -306,6 +283,8 @@ public class FileManagertxt implements FileManager{
     {
         String getData = "SELECT BOOKINGID, USERNAME, DAYOFWEEK, TIMEOFDAY, PEOPLE, DURATION FROM USERBOOKING WHERE USERNAME = ?";
         int bookingCount = 0;
+        String allYourBooking = "<html>";
+        String yourBooking = "";
         
         try (PreparedStatement pstmt = conn.prepareStatement(getData))
             {
@@ -320,19 +299,45 @@ public class FileManagertxt implements FileManager{
                     int presentDuration = rs.getInt("DURATION");
                     
                     bookingCount++;
-                    String yourBooking =  bookingCount + ") day: " + presentDay + " at " + presentTime + ":00 o'clock" + " people: " + presentPeople + " time: " + presentDuration + "\n";
+                    yourBooking =  "<br>" + bookingCount + ") day: " + presentDay + " at " + presentTime + ":00 o'clock" + " people: " + presentPeople + " time: " + presentDuration;
                     System.out.println(yourBooking);
                     
-                    
-                    
+                    allYourBooking += yourBooking + "<html>";
+                     
                 }
+                return allYourBooking;
             }
             catch(Exception e)
             {
                 System.out.println(e);
                 return null;
             }
-            return null;
+    }
+    
+    @Override
+    public Integer countUserBookings(String username) // converted an tested
+    {
+        String getData = "SELECT BOOKINGID, USERNAME, DAYOFWEEK, TIMEOFDAY, PEOPLE, DURATION FROM USERBOOKING WHERE USERNAME = ?";
+        int bookingCount = 0;
+        
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(getData))
+            {
+                pstmt.setString(1, username);
+                ResultSet rs = pstmt.executeQuery(); 
+                while (rs.next())
+                {
+                    
+                    bookingCount++;
+                     
+                }
+                return bookingCount;
+            }
+            catch(Exception e)
+            {
+                System.out.println(e);
+                return null;
+            }
     }
     
     @Override
@@ -356,7 +361,20 @@ public class FileManagertxt implements FileManager{
                 System.out.println(e);
                 return null;
             }
-            
+         
+        //delete order with booking id
+        String deleteOrder = "DELETE FROM USERORDER WHERE BOOKINGID = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteOrder))
+            {
+                pstmt.setInt(1, theBookingId);
+                pstmt.execute();
+            }
+            catch(Exception e)
+            {
+                System.out.println(e);
+                return null;
+            }
             
         //delete booking with booking id
         String deleteBooking = "DELETE FROM USERBOOKING WHERE BOOKINGID = ?";
@@ -371,20 +389,7 @@ public class FileManagertxt implements FileManager{
                 System.out.println(e);
                 return null;
             }
-        //delete order with booking id
-        String deleteOrder = "DELETE FROM USERORDER WHERE BOOKINGID = ?";
-        
-        try (PreparedStatement pstmt = conn.prepareStatement(deleteOrder))
-            {
-                pstmt.setInt(1, theBookingId);
-                pstmt.execute();
-            }
-            catch(Exception e)
-            {
-                System.out.println(e);
-                return null;
-            }
-            return "your booking has been deleated";
+        return "your booking has been deleated";
     }
 
     @Override
@@ -459,7 +464,7 @@ public class FileManagertxt implements FileManager{
         
         // reads user order
         String getData = "SELECT DISH, SERVINGS FROM USERORDER WHERE BOOKINGID = ?";
-        String yourBooking = "============================================================\n";
+        String yourBooking = "<html>";
         double totalOrderCost = 0;
         double total = -1;
         
@@ -489,17 +494,16 @@ public class FileManagertxt implements FileManager{
                             total = price*amount;
                             
                             totalOrderCost += total;
+                            yourBooking += "<br>" + orderDish + " x " + orderAmount + "<br>" + total + "<br>";
                         }
-                        yourBooking += "\n" + orderDish + " x " + orderAmount + "\n" + total + "\n";
+                        
                     }
                 }
                     
                 
             }
-            yourBooking += """
-                           
-                           
-                           Total Cost: """ + totalOrderCost;
+            yourBooking += "<br> Total Cost: " + totalOrderCost;
+            
         }
         catch(Exception e)
         {

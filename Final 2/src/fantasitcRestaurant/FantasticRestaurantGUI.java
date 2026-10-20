@@ -11,7 +11,7 @@ package fantasitcRestaurant;
 public class FantasticRestaurantGUI {
     
     public static void main(String[] args) {
-        FileManagertxt fileManager = new FileManagertxt();
+        FileManagerdbs fileManager = new FileManagerdbs();
         
         View viewStart = new View();
         Model startModel = new Model(viewStart, fileManager);
@@ -19,13 +19,6 @@ public class FantasticRestaurantGUI {
         
         startModel.addListener(viewStart);
         viewStart.setVisible(true);
-//        
-//        
-//        MathView mView = new MathView();
-//        MathModel mModel = new MathModel(mView);
-//        MathController mController = new MathController(mModel, mView);
-//        mView.setVisible(true);
-//        mModel.dbsetup();
     }
     
 }

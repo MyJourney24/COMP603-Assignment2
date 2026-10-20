@@ -8,9 +8,14 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.io.File;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -24,19 +29,63 @@ import javax.swing.JTextField;
  */
 public class View extends JFrame implements ModelListener{
     
+    private Image image;
+    private Font font;
+    
     //initialisation
     public View() {
         // base display
         System.out.println("mainMenueView()");
         
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(600, 400);
+        this.image = new ImageIcon("betsisman-restaurant-5521372.jpg").getImage();
+        this.setSize(600, 600);
+        
+        //added with the help of AI
+        //can't find anything on the lecture for adding imported fonts
+        //I like this font from google fonts
+        try
+        {
+            //From google fonts https://fonts.google.com/specimen/Petit+Formal+Script
+            File fontFile = new File("PetitFormalScript-Regular.ttf");
+            Font baseFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            
+            this.font = baseFont.deriveFont(20f);  
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        
         mainMenueView();
+        
     }
     
     public void layoutConfiguration(JPanel panel)
     {
         panel.setLayout(new javax.swing.BoxLayout(panel, javax.swing.BoxLayout.Y_AXIS));
+        panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        panel.setMaximumSize(panel.getPreferredSize());
+        panel.setBackground(new java.awt.Color(0xfaf0e6));
+    }
+    
+    public JPanel createDefultPanel()
+    {
+        JPanel panel = new JPanel()
+            {
+                @Override
+                protected void paintComponent(Graphics g)
+                {
+                    if (image != null)
+                    {
+                        g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+                    }
+                } 
+            };
+        
+        panel.setLayout(new java.awt.GridBagLayout());
+
+        return panel;
     }
     
     @Override
@@ -73,7 +122,15 @@ public class View extends JFrame implements ModelListener{
             case 10:
                 confirmDetailsDetails.setText(txt);
                 break;
-                
+            case 11:
+                viewBookingDetails.setText(txt);
+                break;
+            case 12:
+                viewBookingActionDetials.setText(txt);
+                break;
+            case 13:
+                viewOrderDetails.setText(txt);
+                break;
         }
             
     }
@@ -89,7 +146,7 @@ public class View extends JFrame implements ModelListener{
                 orderBookingChoiceMenueView();
                 break;
             case 2: 
-                loginView();
+                viewBookingMenueView();
                 break;
             case 3:
                 dietMenueView();
@@ -133,16 +190,25 @@ public class View extends JFrame implements ModelListener{
             case 16:
                 confirmDetailsMenueView();
                 break;
+            case 17:
+                viewBookingMenueView();
+                break;
+            case 18:
+                viewOrderMenueView();
+                break;
+                
         }
                 
     }
     
     // main menue view
+    private JPanel mainMenueBackground = createDefultPanel();
     private JPanel mainMenue = new JPanel();
     private JLabel nameLabel = new JLabel("Welcome to Fantastic Resturaunt");
     private JButton orderBookingButton = new JButton("Order & Make a Booking");
     private JButton viewCancleButton = new JButton("View Order or Cancel Booking");
     private Dimension standardButtonSize = new Dimension(250, 40);
+    private Dimension subButtonSize = new Dimension(125, 30);
     
     public void mainMenueView()
     {
@@ -159,6 +225,9 @@ public class View extends JFrame implements ModelListener{
         orderBookingButton.setMaximumSize(standardButtonSize);
         viewCancleButton.setMaximumSize(standardButtonSize);
         
+        nameLabel.setFont(font);
+        
+        mainMenueBackground.add(mainMenue);
         mainMenue.add(javax.swing.Box.createVerticalStrut(20));
         mainMenue.add(nameLabel);
         mainMenue.add(javax.swing.Box.createVerticalStrut(20));
@@ -166,7 +235,7 @@ public class View extends JFrame implements ModelListener{
         mainMenue.add(javax.swing.Box.createVerticalStrut(10));
         mainMenue.add(viewCancleButton);
         
-        this.add(mainMenue); 
+        this.add(mainMenueBackground); 
         this.revalidate();
         this.repaint();
     }
@@ -182,6 +251,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     //order or book panel
+    private JPanel orderBookingChoiceBackgroud = createDefultPanel();
     private JPanel orderBookingChoice = new JPanel();
     private JLabel orderBookingChoiceLabel = new JLabel("Would you like to pre-order or order on site and skip to booking");
     private JButton orderBookingBackButton = new JButton("Back");
@@ -208,6 +278,7 @@ public class View extends JFrame implements ModelListener{
         orderBookingOrderButton.setMaximumSize(standardButtonSize);
         orderBookingBookingButton.setMaximumSize(standardButtonSize);
         
+        orderBookingChoiceBackgroud.add(orderBookingChoice);
         orderBookingChoice.add(javax.swing.Box.createVerticalStrut(20));
         orderBookingChoice.add(orderBookingChoiceLabel);
         orderBookingChoice.add(javax.swing.Box.createVerticalStrut(20));
@@ -217,7 +288,7 @@ public class View extends JFrame implements ModelListener{
         orderBookingChoice.add(javax.swing.Box.createVerticalStrut(10));
         orderBookingChoice.add(orderBookingBackButton);
         
-        this.add(orderBookingChoice); 
+        this.add(orderBookingChoiceBackgroud); 
         this.revalidate();
         this.repaint();
     }
@@ -238,6 +309,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     //dietary panel
+    private JPanel dietMenueBackground = createDefultPanel();
     private JPanel dietMenue = new JPanel();
     private JPanel checkBoxPanel = new JPanel();
     
@@ -279,6 +351,10 @@ public class View extends JFrame implements ModelListener{
         dietNextButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         dietBackButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         
+        dietNextButton.setPreferredSize(subButtonSize);
+        dietBackButton.setPreferredSize(subButtonSize);
+        
+        dietMenueBackground.add(dietMenue);
         dietMenue.add(javax.swing.Box.createVerticalStrut(20));
         dietMenue.add(dietDiscription);
         dietMenue.add(javax.swing.Box.createVerticalStrut(5));
@@ -298,7 +374,7 @@ public class View extends JFrame implements ModelListener{
         dietMenue.add(javax.swing.Box.createVerticalStrut(10));
         dietMenue.add(dietBackButton);
         
-        this.add(dietMenue);
+        this.add(dietMenueBackground);
         
         this.revalidate();
         this.repaint();
@@ -339,6 +415,7 @@ public class View extends JFrame implements ModelListener{
     public String yourFilteredMenue = "";
     public HashMap<Food, Integer> orderItems;
     
+    private JPanel makeOrderBackground = createDefultPanel();
     private JPanel makeOrder = new JPanel();
     private JPanel filteredMenue = new JPanel();
     private JPanel selectionPanel = new JPanel();
@@ -375,6 +452,7 @@ public class View extends JFrame implements ModelListener{
         makeOrderBack.setPreferredSize(standardButtonSize);
         makeOrderBack.setMaximumSize(standardButtonSize);  
         
+        makeOrderBackground.add(makeOrder);
         makeOrder.add(javax.swing.Box.createVerticalStrut(20));
         makeOrder.add(filteredMenue);
             filteredMenue.add(javax.swing.Box.createVerticalStrut(5));
@@ -394,7 +472,7 @@ public class View extends JFrame implements ModelListener{
         
         filteredMenue.setMaximumSize(new java.awt.Dimension(400, filteredMenue.getPreferredSize().height));
         
-        this.add(makeOrder);
+        this.add(makeOrderBackground);
         this.revalidate();
         this.repaint();
     }
@@ -455,6 +533,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     // save order or back
+    private JPanel saveOrderBackground = createDefultPanel();
     private JPanel saveOrderBack = new JPanel();
     private JPanel yourOrderSummary = new JPanel();
     
@@ -471,6 +550,7 @@ public class View extends JFrame implements ModelListener{
         
         layoutConfiguration(saveOrderBack);
         
+        saveOrderBackground.add(saveOrderBack);
         saveOrderBack.add(javax.swing.Box.createVerticalStrut(20));
         saveOrderBack.add(yourOrderSummary);
             yourOrderSummary.add(javax.swing.Box.createVerticalStrut(5));
@@ -495,7 +575,7 @@ public class View extends JFrame implements ModelListener{
         
         yourOrderSummary.setMaximumSize(yourOrderSummary.getPreferredSize());
         
-        this.add(saveOrderBack);
+        this.add(saveOrderBackground);
         this.revalidate();
         this.repaint();
     }
@@ -511,6 +591,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     //make booking
+    private JPanel availabilitiesBookingChoiceBackground = createDefultPanel();
     private JPanel availabilitiesBookingChoice = new JPanel();
     
     private JLabel availabilitiesBookingChoiceDiscription = new JLabel("(Warning quiting will restart the ordering process)");
@@ -538,6 +619,7 @@ public class View extends JFrame implements ModelListener{
         availabilitiesBookingChoiceQuitButton.setPreferredSize(standardButtonSize);
         availabilitiesBookingChoiceQuitButton.setMaximumSize(standardButtonSize);
         
+        availabilitiesBookingChoiceBackground.add(availabilitiesBookingChoice);
         availabilitiesBookingChoice.add(javax.swing.Box.createVerticalStrut(20));
         availabilitiesBookingChoice.add(availabilitiesBookingChoiceDiscription);
         availabilitiesBookingChoice.add(javax.swing.Box.createVerticalStrut(20));
@@ -547,7 +629,7 @@ public class View extends JFrame implements ModelListener{
         availabilitiesBookingChoice.add(javax.swing.Box.createVerticalStrut(10));
         availabilitiesBookingChoice.add(availabilitiesBookingChoiceQuitButton);
         
-        this.add(availabilitiesBookingChoice); 
+        this.add(availabilitiesBookingChoiceBackground); 
         this.revalidate();
         this.repaint();
     }
@@ -568,7 +650,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     // check availabilities
-    
+    private JPanel availabilityReportBackground = createDefultPanel();
     private JPanel availabilityReport = new JPanel();
     private JPanel availabilityReportDisplay = new JPanel();
     
@@ -584,6 +666,7 @@ public class View extends JFrame implements ModelListener{
         
         layoutConfiguration(availabilityReport);
         
+        availabilityReportBackground.add(availabilityReport);
         availabilityReport.add(javax.swing.Box.createVerticalStrut(20));
         availabilityReport.add(availabilityReportDisplay);
         availabilityReportDisplay.add(availabilityReportLabel);
@@ -606,7 +689,7 @@ public class View extends JFrame implements ModelListener{
         
         
         
-        this.add(availabilityReport); 
+        this.add(availabilityReportBackground); 
         this.revalidate();
         this.repaint();
     }
@@ -622,6 +705,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     //make booking day menue view
+    private JPanel selectDayBackground = createDefultPanel();
     private JPanel selectDay = new JPanel();
     
     private JLabel selectDayLabel = new JLabel("Select the day");
@@ -645,6 +729,7 @@ public class View extends JFrame implements ModelListener{
         this.getContentPane().removeAll();
         selectDay.removeAll();
         layoutConfiguration(selectDay);
+        
         selectDayLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         selectDayDetails.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         selectDayNextButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
@@ -657,6 +742,7 @@ public class View extends JFrame implements ModelListener{
         FridayButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         SaturdayButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         
+        
             groupDay.add(MondayButton);
             groupDay.add(TusedayButton);
             groupDay.add(WednesdayButton);
@@ -664,7 +750,7 @@ public class View extends JFrame implements ModelListener{
             groupDay.add(FridayButton);
             groupDay.add(SaturdayButton);
         
-        
+        selectDayBackground.add(selectDay);
         selectDay.add(selectDayLabel);
             selectDay.add(MondayButton);
             selectDay.add(TusedayButton);
@@ -676,7 +762,7 @@ public class View extends JFrame implements ModelListener{
         selectDay.add(selectDayNextButton);
         selectDay.add(selectDayBackButton);
         
-        this.add(selectDay); 
+        this.add(selectDayBackground); 
         this.revalidate();
         this.repaint();
     }
@@ -724,6 +810,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     //make booking hour menue view
+    private JPanel selectHourBackground = createDefultPanel();
     private JPanel selectHour = new JPanel();
     
     private JLabel selectHourLabel = new JLabel("Select the Hour");
@@ -788,7 +875,7 @@ public class View extends JFrame implements ModelListener{
             groupHour.add(hour22Button);
             
         
-        
+        selectHourBackground.add(selectHour);
         selectHour.add(selectHourLabel);
             selectHour.add(hour11Button);
             selectHour.add(hour12Button);
@@ -806,7 +893,7 @@ public class View extends JFrame implements ModelListener{
         selectHour.add(selectHourNextButton);
         selectHour.add(selectHourBackButton);
         
-        this.add(selectHour); 
+        this.add(selectHourBackground); 
         this.revalidate();
         this.repaint();
     }
@@ -883,6 +970,7 @@ public class View extends JFrame implements ModelListener{
         selectHourBackButton.addActionListener(listener);
     }
     
+    private JPanel selectPeopleBackground = createDefultPanel();
     private JPanel selectPeople = new JPanel();
     
     private JLabel selectPeopleLabel = new JLabel("Select the amount of people coming");
@@ -908,13 +996,14 @@ public class View extends JFrame implements ModelListener{
         peopleCount.setPreferredSize(standardButtonSize);
         peopleCount.setMaximumSize(standardButtonSize);
         
+        selectPeopleBackground.add(selectPeople);
         selectPeople.add(selectPeopleLabel);
         selectPeople.add(peopleCount);
         selectPeople.add(selectPeopleDescription);
         selectPeople.add(selectPeopleNextButton);
         selectPeople.add(selectPeopleBackButton);
         
-        this.add(selectPeople); 
+        this.add(selectPeopleBackground); 
         this.revalidate();
         this.repaint();
     }
@@ -951,6 +1040,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     //make booking hour menue view
+    private JPanel selectDurationBackground = createDefultPanel();
     private JPanel selectDuration = new JPanel();
     
     private JLabel selectDurationLabel = new JLabel("Select the Hour");
@@ -988,7 +1078,7 @@ public class View extends JFrame implements ModelListener{
             groupDuration.add(duration3Button);
             
         
-        
+        selectDurationBackground.add(selectDuration);
         selectDuration.add(selectDurationLabel);
             selectDuration.add(duration1Button);
             selectDuration.add(duration2Button);
@@ -997,7 +1087,7 @@ public class View extends JFrame implements ModelListener{
         selectDuration.add(selectDurationNextButton);
         selectDuration.add(selectDurationBackButton);
         
-        this.add(selectDuration); 
+        this.add(selectDurationBackground); 
         this.revalidate();
         this.repaint();
     }
@@ -1028,6 +1118,7 @@ public class View extends JFrame implements ModelListener{
     }
     
     // is available screen
+    private JPanel availableOrNotBackground = createDefultPanel();
     private JPanel availableOrNot = new JPanel();
     private JPanel availableOrNotResultPanel = new JPanel();
     
@@ -1040,6 +1131,7 @@ public class View extends JFrame implements ModelListener{
         availableOrNot.removeAll();
         layoutConfiguration(availableOrNot);
         
+        availableOrNotBackground.add(availableOrNot);
         availableOrNot.add(availableOrNotResultPanel);
             availableOrNotResultPanel.add(availableOrNotResult);
         availableOrNot.add(availableOrNotNextButton);
@@ -1050,7 +1142,7 @@ public class View extends JFrame implements ModelListener{
         availableOrNotResultPanel.setMaximumSize(availableOrNotResultPanel.getPreferredSize());
         
         
-        this.add(availableOrNot);
+        this.add(availableOrNotBackground);
         this.revalidate();
         this.repaint();
                 
@@ -1062,7 +1154,8 @@ public class View extends JFrame implements ModelListener{
     }
     
     
-    // sign up or login in 
+    // sign up or login in
+    private JPanel signupOrLoginBackground = createDefultPanel();
     private JPanel signupOrLogin = new JPanel();
     private JLabel signupOrLoginLabel = new JLabel("Signup or Login");
     
@@ -1081,12 +1174,13 @@ public class View extends JFrame implements ModelListener{
         signupOrLoginSignUpButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         signupOrLoginBackButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         
+        signupOrLoginBackground.add(signupOrLogin);
         signupOrLogin.add(signupOrLoginLabel);
         signupOrLogin.add(singupOrLoginLoginButton);
         signupOrLogin.add(signupOrLoginSignUpButton);
         signupOrLogin.add(signupOrLoginBackButton);
         
-        this.add(signupOrLogin);
+        this.add(signupOrLoginBackground);
         this.revalidate();
         this.repaint();
     }
@@ -1108,11 +1202,12 @@ public class View extends JFrame implements ModelListener{
     
     // login
     //login View start
-    private JPanel userPanelLogin = new JPanel();
-    private JLabel uNameLogin = new JLabel("Username: ");
-    private JLabel pWordLogin = new JLabel("Password: ");
-    private JTextField unInputLogin = new JTextField(10);
-    private JTextField pwInputLogin = new JTextField(10);
+    private JPanel loginPanelBackground = createDefultPanel();
+    private JPanel loginPanel = new JPanel();
+    private JLabel usernameLogin = new JLabel("Username: ");
+    private JLabel passwordLogin = new JLabel("Password: ");
+    private JTextField usernameInputLogin = new JTextField(30);
+    private JTextField passwordInputLogin = new JTextField(30);
     private JButton loginButton = new JButton("Log in");
     private JButton loginBack = new JButton("Back");
     
@@ -1120,40 +1215,41 @@ public class View extends JFrame implements ModelListener{
     public void loginView()
     {
         this.getContentPane().removeAll();
-        userPanelLogin.removeAll();
-        layoutConfiguration(userPanelLogin);
+        loginPanel.removeAll();
+        layoutConfiguration(loginPanel);
         
-        uNameLogin.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        pWordLogin.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        usernameLogin.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        passwordLogin.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         loginButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         loginBack.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
                 
-        unInputLogin.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        unInputLogin.setPreferredSize(standardButtonSize);
-        unInputLogin.setMaximumSize(standardButtonSize);
+        usernameInputLogin.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        usernameInputLogin.setPreferredSize(standardButtonSize);
+        usernameInputLogin.setMaximumSize(standardButtonSize);
         
-        pwInputLogin.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        pwInputLogin.setPreferredSize(standardButtonSize);
-        pwInputLogin.setMaximumSize(standardButtonSize);
+        passwordInputLogin.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        passwordInputLogin.setPreferredSize(standardButtonSize);
+        passwordInputLogin.setMaximumSize(standardButtonSize);
         
-        userPanelLogin.add(uNameLogin);
-        userPanelLogin.add(unInputLogin);
-        userPanelLogin.add(pWordLogin);
-        userPanelLogin.add(pwInputLogin);
-        userPanelLogin.add(loginButton);
-        userPanelLogin.add(loginBack);
+        loginPanelBackground.add(loginPanel);
+        loginPanel.add(usernameLogin);
+        loginPanel.add(usernameInputLogin);
+        loginPanel.add(passwordLogin);
+        loginPanel.add(passwordInputLogin);
+        loginPanel.add(loginButton);
+        loginPanel.add(loginBack);
         
-        this.add(userPanelLogin); 
+        this.add(loginPanelBackground); 
         this.revalidate();
         this.repaint();
     }
     
     public String getLoginUnText() 
-    { return unInputLogin.getText(); }
+    { return usernameInputLogin.getText(); }
     
     
     public String getLoginPwText() 
-    { return pwInputLogin.getText(); }
+    { return passwordInputLogin.getText(); }
     
     public void addLoginButtonListener(ActionListener listener) {
     loginButton.addActionListener(listener);
@@ -1164,55 +1260,66 @@ public class View extends JFrame implements ModelListener{
     }
     
     //Signup View start
-    private JPanel userPanelSignup = new JPanel();
-    private JLabel uNameSignup = new JLabel("Username: ");
-    private JLabel pWordSignup = new JLabel("Password: ");
-    private JTextField unInputSignup = new JTextField(10);
-    private JTextField pwInputSignup = new JTextField(10);
+    private JPanel SignupPanelBackground = createDefultPanel();
+    private JPanel SignupPanel = new JPanel();
+    private JLabel usernameSignup = new JLabel("Username: ");
+    private JLabel passwordSignup = new JLabel("Password: ");
+    private JTextField usernameInputSignup = new JTextField(30);
+    private JTextField passwordInputSignup = new JTextField(30);
     private JButton SignupButton = new JButton("Sign up");
+    private JButton SignupBackButton = new JButton("Back");
     
     
     public void SignupView()
     {
         this.getContentPane().removeAll();
-        userPanelSignup.removeAll();
-        layoutConfiguration(userPanelSignup);
+        SignupPanel.removeAll();
+        layoutConfiguration(SignupPanel);
         
-        uNameSignup.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        pWordSignup.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        usernameSignup.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        passwordSignup.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         SignupButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        SignupBackButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
                 
-        unInputSignup.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        unInputSignup.setPreferredSize(standardButtonSize);
-        unInputSignup.setMaximumSize(standardButtonSize);
+        usernameInputSignup.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        usernameInputSignup.setPreferredSize(standardButtonSize);
+        usernameInputSignup.setMaximumSize(standardButtonSize);
         
-        pwInputSignup.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        pwInputSignup.setPreferredSize(standardButtonSize);
-        pwInputSignup.setMaximumSize(standardButtonSize);
+        passwordInputSignup.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        passwordInputSignup.setPreferredSize(standardButtonSize);
+        passwordInputSignup.setMaximumSize(standardButtonSize);
         
-        userPanelSignup.add(uNameSignup);
-        userPanelSignup.add(unInputSignup);
-        userPanelSignup.add(pWordSignup);
-        userPanelSignup.add(pwInputSignup);
-        userPanelSignup.add(SignupButton);
+        SignupPanelBackground.add(SignupPanel);
+        SignupPanel.add(usernameSignup);
+        SignupPanel.add(usernameInputSignup);
+        SignupPanel.add(passwordSignup);
+        SignupPanel.add(passwordInputSignup);
+        SignupPanel.add(SignupButton);
+        SignupPanel.add(SignupBackButton);
         
-        this.add(userPanelSignup); 
+        this.add(SignupPanelBackground); 
         this.revalidate();
         this.repaint();
     }
     
     public String getSignupUnText() 
-    { return unInputSignup.getText(); }
+    { return usernameInputSignup.getText(); }
     
     
     public String getSignupPwText() 
-    { return pwInputSignup.getText(); }
+    { return passwordInputSignup.getText(); }
     
     public void addSignupButtonListener(ActionListener listener) {
-    SignupButton.addActionListener(listener);
+        SignupButton.addActionListener(listener);
+    }
+    
+    public void addSignupBackButtonListener(ActionListener listener)
+    {
+        SignupBackButton.addActionListener(listener);
     }
     
     // final confirmation 
+    private JPanel confirmDetailsBackground = createDefultPanel();
     private JPanel confirmDetails = new JPanel();
     private JPanel orderDetails = new JPanel();
    
@@ -1230,6 +1337,7 @@ public class View extends JFrame implements ModelListener{
         
         layoutConfiguration(confirmDetails);
         
+        confirmDetailsBackground.add(confirmDetails);
         confirmDetails.add(confirmDetailsSaveOrder);
         confirmDetails.add(orderDetails);
             orderDetails.add(confirmDetailsDetails);
@@ -1246,10 +1354,170 @@ public class View extends JFrame implements ModelListener{
         
         
         
-        this.add(confirmDetails);
+        this.add(confirmDetailsBackground);
         this.revalidate();
         this.repaint();
     } 
-
     
+    public void addconfirmDetailsYesListener(ActionListener listener) {
+        confirmDetailsYes.addActionListener(listener);
+    }
+    
+    public void addconfirmDetailsNoListener(ActionListener listener) {
+        confirmDetailsNo.addActionListener(listener);
+    }
+    
+    
+    // view booking
+    private JPanel viewBookingBackground = createDefultPanel();
+    private JPanel viewBooking = new JPanel();
+    private JPanel viewBookingDetailsPanel = new JPanel();
+    private JPanel viewBookingViewPanel = new JPanel ();
+    private JPanel viewBookingCancelPanel = new JPanel ();
+    
+    
+    private JLabel viewBookingDetails = new JLabel("booking details: ");
+    private JLabel viewBookingActionDetials = new JLabel("Please type the corrisponding order number");
+    
+    private JTextField viewBookingViewTF = new JTextField(2);
+    private JButton viewBookingViewOrder = new JButton("View order");
+    
+    private JTextField viewBookingCancleTF = new JTextField(2);
+    private JButton viewBookingCancelBooking = new JButton("Cancel Booking");
+    
+    private JButton viewBookingBack = new JButton("Back");
+    
+    
+    
+    public void viewBookingMenueView()
+    {
+        this.getContentPane().removeAll();
+        viewBooking.removeAll();
+        viewBookingDetailsPanel.removeAll();
+        viewBookingViewPanel.removeAll();
+        viewBookingCancelPanel.removeAll();
+        
+        layoutConfiguration(viewBooking);
+        
+        viewBookingBackground.add(viewBooking);
+        viewBooking.add(viewBookingDetailsPanel);
+            viewBookingDetailsPanel.add(viewBookingDetails);
+        viewBooking.add(viewBookingActionDetials);
+        viewBooking.add(viewBookingViewPanel);
+            viewBookingViewPanel.add(viewBookingViewTF);
+            viewBookingViewPanel.add(viewBookingViewOrder);
+        viewBooking.add(viewBookingCancelPanel);
+            viewBookingCancelPanel.add(viewBookingCancleTF);
+            viewBookingCancelPanel.add(viewBookingCancelBooking);
+        viewBooking.add(viewBookingBack);
+        
+        viewBookingDetailsPanel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        viewBookingActionDetials.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        viewBookingViewPanel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        viewBookingCancelPanel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        
+        viewBookingBack.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+                
+        viewBookingDetailsPanel.setMaximumSize(viewBookingDetailsPanel.getPreferredSize());
+        viewBookingViewPanel.setMaximumSize(viewBookingViewPanel.getPreferredSize());
+        viewBookingCancelPanel.setMaximumSize(viewBookingCancelPanel.getPreferredSize());
+        
+        
+        
+        this.add(viewBookingBackground); 
+        this.revalidate();
+        this.repaint();
+    }
+    
+    public int getviewBookingViewTF()
+    {
+        if (viewBookingViewTF.getText().isEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            try
+            {
+                int theNumber = Integer.parseInt(viewBookingViewTF.getText());
+                return theNumber;
+            }
+            catch (Exception e)
+            {
+                return 0; 
+            }
+        }
+    }
+    
+    public int getviewBookingCancelTF()
+    {
+        if (viewBookingCancleTF.getText().isEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            try
+            {
+                int theNumber = Integer.parseInt(viewBookingCancleTF.getText());
+                return theNumber;
+            }
+            catch (Exception e)
+            {
+                return 0; 
+            }
+        }
+    }
+    
+    public void addviewBookingViewOrderListener(ActionListener listener) {
+        viewBookingViewOrder.addActionListener(listener);
+    }
+    
+    public void addviewBookingCancelBookingistener(ActionListener listener) {
+        viewBookingCancelBooking.addActionListener(listener);
+    }
+    
+    public void addviewBookingBackListener(ActionListener listener) {
+        viewBookingBack.addActionListener(listener);
+    }
+    
+    //view order
+    private JPanel viewOrderBackground = createDefultPanel();
+    private JPanel viewOrder = new JPanel();
+    private JPanel viewOrderDetailsPanel = new JPanel();
+    
+    private JLabel viewOrderDetails = new JLabel("Order details: ");
+    
+    private JButton viewOrderBack = new JButton("Back");
+    
+    
+    
+    public void viewOrderMenueView()
+    {
+        this.getContentPane().removeAll();
+        viewOrder.removeAll();
+        viewOrderDetailsPanel.removeAll();
+        
+        layoutConfiguration(viewOrder);
+        
+        viewOrderBackground.add(viewOrder);
+        viewOrder.add(viewOrderDetailsPanel);
+            viewOrderDetailsPanel.add(viewOrderDetails);
+        viewOrder.add(viewOrderBack);
+        
+        viewOrderDetailsPanel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        viewOrderBack.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        
+        viewOrderDetailsPanel.setMaximumSize(viewOrderDetailsPanel.getPreferredSize());
+        
+        
+        
+        this.add(viewOrderBackground); 
+        this.revalidate();
+        this.repaint();
+    }
+    
+    public void addviewOrderBackListener(ActionListener listener) {
+        viewOrderBack.addActionListener(listener);
+    }
 }

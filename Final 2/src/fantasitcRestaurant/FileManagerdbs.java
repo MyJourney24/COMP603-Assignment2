@@ -21,9 +21,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class FileManagerdbs implements FileManager{
     
-    private static final String userFile = "Username.txt";
-    private static final String bookingFile = "Booking.txt";
-    private static final String orderFile = "Order.txt";
     private Menue m1 = new Menue();
     private ArrayList<Food> fullMenu = m1.getFullMenu();
     
